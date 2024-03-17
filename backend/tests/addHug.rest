@@ -1,0 +1,4 @@
+PUT http://localhost:3000/posts/4/hug
+Content-Type: application/json
+
+{}

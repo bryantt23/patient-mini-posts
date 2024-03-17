@@ -24,6 +24,26 @@ app.get('/posts', async (req, res) => {
     }
 });
 
+app.put('/posts/:id/hug', async (req, res) => {
+    const postId = req.params.id;
+
+    try {
+        const postResponse = await axios.get(`${JSON_SERVER_URL}/${postId}`);
+        const post = postResponse.data;
+
+        const updatedPost = {
+            ...post,
+            num_hugs: post.num_hugs + 1
+        };
+        await axios.patch(`${JSON_SERVER_URL}/${postId}`, { num_hugs: updatedPost.num_hugs });
+        res.json(updatedPost);
+    } catch (error) {
+        console.error('Error updating post hugs:', error);
+        res.status(500).send('An error occurred while updating the number of hugs');
+    }
+});
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
