@@ -1,11 +1,13 @@
 const axios = require('axios')
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
 const PORT = 3000;
 const JSON_SERVER_URL = 'http://localhost:3001/posts'
 
 app.use(express.json());
+app.use(cors());
 
 app.get('/hello', (req, res) => {
     res.send('Hello World!');
