@@ -8,9 +8,9 @@ interface Comment {
     display_name: string;
 }
 
-export const fetchPosts = async (start: number = 1, limit: number = 10) => {
+export const fetchPosts = async (start: number = 0, limit: number = 10) => {
     try {
-        const response = await axios.get(`${JSON_SERVER_URL}?_start=${start}&_limit=${limit}`);
+        const response = await axios.get(`${JSON_SERVER_URL}?start=${start}&limit=${limit}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching posts:', error);
@@ -18,7 +18,7 @@ export const fetchPosts = async (start: number = 1, limit: number = 10) => {
     }
 };
 
-export const increaseHugsForPost = async (postId: string) => {
+export const givePostHug = async (postId: string) => {
     try {
         const response = await axios.put(`${JSON_SERVER_URL}/${postId}/hug`);
         return response.data;
