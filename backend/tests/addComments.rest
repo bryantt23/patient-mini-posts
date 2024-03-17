@@ -1,0 +1,41 @@
+###
+# 1. Add a comment to post with ID 4
+POST http://localhost:3000/posts/4/comments
+Content-Type: application/json
+
+{
+  "display_name": "New Commenter",
+  "text": "This is a new comment on post 4."
+}
+
+###
+# 2. Add a comment to post 4, replying to comment ID 3, now 3 levels deep, should fail
+POST http://localhost:3000/posts/4/comments
+Content-Type: application/json
+
+{
+  "parent_id": 3,
+  "display_name": "Reply Commenter",
+  "text": "This is a reply to comment 3 on post 4."
+}
+
+###
+# 3. Add a comment to post 4, replying to comment ID 2, now it's 2 levels deep
+POST http://localhost:3000/posts/4/comments
+Content-Type: application/json
+
+{
+  "parent_id": 2,
+  "display_name": "Another Reply Commenter",
+  "text": "This is a reply to comment 2 on post 4."
+}
+
+###
+# 4. Add a comment to post with ID 5
+POST http://localhost:3000/posts/5/comments
+Content-Type: application/json
+
+{
+  "display_name": "Commenter for Post 5",
+  "text": "This is a new comment on post 5."
+}
