@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:express": "node index.js",
+    "start:express": "nodemon index.js",
     "start:json-server": "json-server --watch db.json --port 3001 db.json",
     "start": "concurrently \"npm run start:express\" \"npm run start:json-server\""
   },

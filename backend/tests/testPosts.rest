@@ -1,1 +1,14 @@
 GET http://localhost:3000/posts
+###
+GET http://localhost:3000/posts?start=1&limit=10
+###
+GET http://localhost:3000/posts?start=2&limit=10
+###
+GET http://localhost:3000/posts?start=59&limit=10
+###
+GET http://localhost:3000/posts?start=500&limit=10
+
+
+
+
+
