@@ -49,6 +49,7 @@ app.post('/posts/:postId/comments', async (req, res) => {
     const { postId } = req.params;
     const { parent_id } = req.body;
     const newComment = {
+        parent_id: req.body.parent_id || null,
         created_at: new Date().toISOString(), ...req.body
     };
 
