@@ -4,7 +4,7 @@ import { addCommentToPost, givePostHug } from '../services/patientInfo';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
 import { IComment, PostProps } from '../types';
-import { nestComments } from '../utils/commentUtils';
+import { addCommentToComment, nestComments } from '../utils/commentUtils';
 
 const Post: React.FC<PostProps> = ({ post }) => {
   const { id, title, created_at, num_hugs, comments } = post;
@@ -34,7 +34,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
   const handleAddComment = async (text: string, parentId?: number | null) => {
     const newCommentData = {
-      display_name: 'Logged in user', // Update as needed
+      display_name: 'Logged in user',
       text,
       parent_id: parentId || null
     };
@@ -42,21 +42,12 @@ const Post: React.FC<PostProps> = ({ post }) => {
     try {
       const newComment = await addCommentToPost(id, newCommentData);
       if (newComment && newComment.comment) {
-        const updatedComments = _.cloneDeep(nestedComments); // Using lodash's cloneDeep
+        const updatedComments = _.cloneDeep(nestedComments);
+        // add comment to post
         if (!parentId) {
           updatedComments.push(newComment.comment);
         } else {
-          const findAndAddComment = (comments: IComment[]) => {
-            comments.forEach(comment => {
-              if (comment.id === parentId) {
-                if (!comment.replies) comment.replies = [];
-                comment.replies.push(newComment.comment);
-              } else if (comment.replies) {
-                findAndAddComment(comment.replies);
-              }
-            });
-          };
-          findAndAddComment(updatedComments);
+          addCommentToComment(updatedComments, newComment.comment, parentId);
         }
         setNestedComments(updatedComments);
       }

@@ -1,4 +1,3 @@
-import { cloneDeep } from "lodash";
 import { IComment } from "../types";
 
 export const nestComments = (commentList: IComment[]): IComment[] => {
@@ -25,35 +24,20 @@ export const nestComments = (commentList: IComment[]): IComment[] => {
     );
 };
 
-export const addNestedComment = (
-    nestedComments: IComment[],
+export const addCommentToComment = (
+    comments: IComment[],
     newComment: IComment,
     parentId?: number | null
-): IComment[] => {
-    const updatedComments = cloneDeep(nestedComments);
-    if (parentId === null || parentId === undefined) {
-        // If parentId is null or undefined, add the comment to the top level
-        updatedComments.push(newComment);
-    } else {
-        // Otherwise, find the parent and add the new comment to its replies
-        const findAndAddComment = (comments: IComment[]): boolean => {
-            for (const comment of comments) {
-                if (comment.id === parentId) {
-                    if (!comment.replies) {
-                        comment.replies = [];
-                    }
-                    comment.replies.push(newComment);
-                    return true; // Stop the search as we've added the comment
-                }
-                // If the current comment has replies, search them too
-                if (comment.replies && findAndAddComment(comment.replies)) {
-                    return true; // Stop the search as we've added the comment
-                }
+): void => {
+    const findAndAddComment = (comments: IComment[]) => {
+        comments.forEach(comment => {
+            if (comment.id === parentId) {
+                if (!comment.replies) comment.replies = [];
+                comment.replies.push(newComment);
+            } else if (comment.replies) {
+                findAndAddComment(comment.replies);
             }
-            return false; // Comment not found at this level
-        };
-
-        findAndAddComment(updatedComments);
-    }
-    return updatedComments;
+        });
+    };
+    findAndAddComment(comments);
 };
