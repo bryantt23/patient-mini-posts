@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import CommentForm from './CommentForm'; // Ensure you have this import
-
-interface CommentProps {
-  comment: Comment;
-  onReply: (text: string, parentId: number) => Promise<void>; // Adjusted to match the async nature
-  level: number;
-}
+import { CommentProps } from '../types';
 
 const Comment: React.FC<CommentProps> = ({ comment, onReply, level }) => {
   const [isReplying, setIsReplying] = useState(false);

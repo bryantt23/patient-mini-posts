@@ -2,12 +2,6 @@ import axios from 'axios';
 
 const JSON_SERVER_URL = 'http://localhost:3000/posts';
 
-interface Comment {
-    parent_id?: number | null;
-    text: string;
-    display_name: string;
-}
-
 export const fetchPosts = async (start: number = 0, limit: number = 10) => {
     try {
         const response = await axios.get(`${JSON_SERVER_URL}?start=${start}&limit=${limit}`);

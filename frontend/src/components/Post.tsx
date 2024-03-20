@@ -3,26 +3,7 @@ import _ from 'lodash';
 import { addCommentToPost, givePostHug } from '../services/patientInfo';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
-
-interface Comment {
-  id: number;
-  parent_id: number | null;
-  display_name: string;
-  text: string;
-  created_at: string;
-  replies?: Comment[];
-}
-
-interface PostProps {
-  post: {
-    id: string;
-    title: string;
-    patient_description: string;
-    created_at: string;
-    num_hugs: number;
-    comments?: Record<string, Comment>;
-  };
-}
+import { PostProps } from '../types';
 
 const nestComments = (commentList: Comment[]): Comment[] => {
   const commentMap: { [key: string]: Comment } = {};

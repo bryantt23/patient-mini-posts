@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-
-interface CommentFormProps {
-  postId: string;
-  parentId?: number | null;
-  onCommentAdded: (text: string, comment: any) => void; // Adjust the type of comment according to your needs
-}
+import { CommentFormProps } from '../types';
 
 const CommentForm: React.FC<CommentFormProps> = ({
   parentId = null,
