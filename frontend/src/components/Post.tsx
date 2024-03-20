@@ -58,6 +58,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
   const [nestedComments, setNestedComments] = useState<Comment[]>(
     initialNestedComments
   );
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const handleHug = async () => {
     if (!alreadyHugged) {
@@ -100,13 +101,25 @@ const Post: React.FC<PostProps> = ({ post }) => {
     }
   };
 
+  const renderDescription = () => {
+    return isCollapsed && post.patient_description.length > 150
+      ? `${post.patient_description.substring(0, 147)}... `
+      : post.patient_description;
+  };
+
   return (
     <div>
       <h2>{title}</h2>
       <p>
-        {patient_description.length > 100
-          ? `${patient_description.substring(0, 97)}...`
-          : patient_description}
+        {renderDescription()}
+        {isCollapsed && post.patient_description.length > 150 && (
+          <span
+            style={{ fontWeight: 'bold', cursor: 'pointer' }}
+            onClick={() => setIsCollapsed(false)}
+          >
+            See More
+          </span>
+        )}
       </p>
       <p>Created at: {created_at}</p>
       <button onClick={handleHug} disabled={alreadyHugged}>
