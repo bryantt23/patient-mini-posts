@@ -37,8 +37,8 @@ const Posts = () => {
         }
       >
         {/* {posts} */}
-        {posts.map(post => (
-          <Post key={post.id} post={post} />
+        {posts.map((post, index) => (
+          <Post key={index} post={post} />
         ))}
       </InfiniteScroll>
     </div>
