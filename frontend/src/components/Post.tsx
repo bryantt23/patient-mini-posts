@@ -4,34 +4,10 @@ import { addCommentToPost, givePostHug } from '../services/patientInfo';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
 import { IComment, PostProps } from '../types';
-
-const nestComments = (commentList: IComment[]): IComment[] => {
-  const commentMap: { [key: string]: IComment } = {};
-
-  // Step 1: Create a map of id -> comment.
-  commentList.forEach(comment => {
-    commentMap[comment.id] = { ...comment, replies: [] };
-  });
-
-  // Step 2: Nest the comments.
-  Object.values(commentMap).forEach(comment => {
-    if (comment.parent_id !== null) {
-      const parent = commentMap[comment.parent_id];
-      if (parent) {
-        parent.replies?.push(comment);
-      }
-    }
-  });
-
-  // Step 3: Extract the top-level comments.
-  return Object.values(commentMap).filter(
-    comment => comment.parent_id === null
-  );
-};
+import { nestComments } from '../utils/commentUtils';
 
 const Post: React.FC<PostProps> = ({ post }) => {
-  const { id, title, patient_description, created_at, num_hugs, comments } =
-    post;
+  const { id, title, created_at, num_hugs, comments } = post;
   const [alreadyHugged, setAlreadyHugged] = useState(false);
   const [hugCount, setHugCount] = useState(num_hugs);
   const initialComments: IComment[] = comments ? Object.values(comments) : [];
