@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { CommentData } from '../types';
 
 const JSON_SERVER_URL = 'http://localhost:3000/posts';
 
@@ -22,7 +23,7 @@ export const givePostHug = async (postId: string) => {
     }
 };
 
-export const addCommentToPost = async (postId: string, comment: Comment) => {
+export const addCommentToPost = async (postId: string, comment: CommentData) => {
     try {
         const response = await axios.post(`${JSON_SERVER_URL}/${postId}/comments`, comment);
         return response.data;

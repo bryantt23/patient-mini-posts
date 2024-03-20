@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { fetchPosts } from '../services/patientInfo';
 import Post from './Post';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { IPost } from '../types';
 
 const PAGE_SIZE = 3;
 const Posts = () => {
   const [index, setIndex] = useState(0);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
   const fetchData = async () => {
@@ -32,11 +33,10 @@ const Posts = () => {
         loader={<h4>Loading...</h4>}
         endMessage={
           <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
+            <b>You have seen every post</b>
           </p>
         }
       >
-        {/* {posts} */}
         {posts.map((post, index) => (
           <Post key={index} post={post} />
         ))}

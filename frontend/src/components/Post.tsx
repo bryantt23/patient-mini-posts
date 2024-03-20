@@ -3,10 +3,10 @@ import _ from 'lodash';
 import { addCommentToPost, givePostHug } from '../services/patientInfo';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
-import { PostProps } from '../types';
+import { IComment, PostProps } from '../types';
 
-const nestComments = (commentList: Comment[]): Comment[] => {
-  const commentMap: { [key: string]: Comment } = {};
+const nestComments = (commentList: IComment[]): IComment[] => {
+  const commentMap: { [key: string]: IComment } = {};
 
   // Step 1: Create a map of id -> comment.
   commentList.forEach(comment => {
@@ -34,9 +34,9 @@ const Post: React.FC<PostProps> = ({ post }) => {
     post;
   const [alreadyHugged, setAlreadyHugged] = useState(false);
   const [hugCount, setHugCount] = useState(num_hugs);
-  const initialComments = comments ? Object.values(comments) : [];
+  const initialComments: IComment[] = comments ? Object.values(comments) : [];
   const initialNestedComments = nestComments(initialComments);
-  const [nestedComments, setNestedComments] = useState<Comment[]>(
+  const [nestedComments, setNestedComments] = useState<IComment[]>(
     initialNestedComments
   );
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -52,11 +52,11 @@ const Post: React.FC<PostProps> = ({ post }) => {
     if (!alreadyHugged) {
       await givePostHug(id);
       setAlreadyHugged(true);
-      setHugCount(prevCount => prevCount + 1);
+      setHugCount((prevCount: number) => prevCount + 1);
     }
   };
 
-  const handleAddComment = async (text: string, parentId?: number) => {
+  const handleAddComment = async (text: string, parentId?: number | null) => {
     const newCommentData = {
       display_name: 'Logged in user', // Update as needed
       text,
@@ -66,11 +66,11 @@ const Post: React.FC<PostProps> = ({ post }) => {
     try {
       const newComment = await addCommentToPost(id, newCommentData);
       if (newComment && newComment.comment) {
-        let updatedComments = _.cloneDeep(nestedComments); // Using lodash's cloneDeep
+        const updatedComments = _.cloneDeep(nestedComments); // Using lodash's cloneDeep
         if (!parentId) {
           updatedComments.push(newComment.comment);
         } else {
-          const findAndAddComment = (comments: Comment[]) => {
+          const findAndAddComment = (comments: IComment[]) => {
             comments.forEach(comment => {
               if (comment.id === parentId) {
                 if (!comment.replies) comment.replies = [];
