@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import _ from 'lodash';
 import { addCommentToPost, givePostHug } from '../services/patientInfo';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
@@ -9,6 +10,7 @@ interface Comment {
   display_name: string;
   text: string;
   created_at: string;
+  replies?: Comment[];
 }
 
 interface PostProps {
@@ -22,8 +24,8 @@ interface PostProps {
   };
 }
 
-const nestComments = commentList => {
-  const commentMap = {};
+const nestComments = (commentList: Comment[]): Comment[] => {
+  const commentMap: { [key: string]: Comment } = {};
 
   // Step 1: Create a map of id -> comment.
   commentList.forEach(comment => {
@@ -35,17 +37,15 @@ const nestComments = commentList => {
     if (comment.parent_id !== null) {
       const parent = commentMap[comment.parent_id];
       if (parent) {
-        parent.replies.push(comment);
+        parent.replies?.push(comment);
       }
     }
   });
 
   // Step 3: Extract the top-level comments.
-  const nestedComments = Object.values(commentMap).filter(
+  return Object.values(commentMap).filter(
     comment => comment.parent_id === null
   );
-
-  return nestedComments;
 };
 
 const Post: React.FC<PostProps> = ({ post }) => {
@@ -53,7 +53,8 @@ const Post: React.FC<PostProps> = ({ post }) => {
     post;
   const [alreadyHugged, setAlreadyHugged] = useState(false);
   const [hugCount, setHugCount] = useState(num_hugs);
-  const initialNestedComments = nestComments(Object.values(comments));
+  const initialComments = comments ? Object.values(comments) : [];
+  const initialNestedComments = nestComments(initialComments);
   const [nestedComments, setNestedComments] = useState<Comment[]>(
     initialNestedComments
   );
@@ -67,25 +68,30 @@ const Post: React.FC<PostProps> = ({ post }) => {
   };
 
   const handleAddComment = async (text: string, parentId?: number) => {
-    // Prepare comment data
     const newCommentData = {
       display_name: 'Logged in user', // Update as needed
-      text: text,
+      text,
       parent_id: parentId || null
     };
 
     try {
       const newComment = await addCommentToPost(id, newCommentData);
-      if (newComment) {
-        // If the comment is successfully added, update nestedComments state
-        // debugger;
-        const updatedComments = [...nestedComments];
-        if (parentId === null || parentId === undefined) {
-          // Add new comment at the top level
+      if (newComment && newComment.comment) {
+        let updatedComments = _.cloneDeep(nestedComments); // Using lodash's cloneDeep
+        if (!parentId) {
           updatedComments.push(newComment.comment);
         } else {
-          // Find the parent comment and add this new comment as a reply
-          // This logic will depend on how you're structuring replies in your state
+          const findAndAddComment = (comments: Comment[]) => {
+            comments.forEach(comment => {
+              if (comment.id === parentId) {
+                if (!comment.replies) comment.replies = [];
+                comment.replies.push(newComment.comment);
+              } else if (comment.replies) {
+                findAndAddComment(comment.replies);
+              }
+            });
+          };
+          findAndAddComment(updatedComments);
         }
         setNestedComments(updatedComments);
       }
@@ -94,32 +100,27 @@ const Post: React.FC<PostProps> = ({ post }) => {
     }
   };
 
-  const shortenedDescription =
-    patient_description.length > 100
-      ? `${patient_description.substring(0, 97)}...`
-      : patient_description;
-
   return (
     <div>
       <h2>{title}</h2>
-      <p>{shortenedDescription}</p>
+      <p>
+        {patient_description.length > 100
+          ? `${patient_description.substring(0, 97)}...`
+          : patient_description}
+      </p>
       <p>Created at: {created_at}</p>
       <button onClick={handleHug} disabled={alreadyHugged}>
         {hugCount} Hugs
       </button>
       <CommentForm postId={id} onCommentAdded={handleAddComment} />
-      {comments &&
-        nestedComments.map(comment => {
-          console.log('🚀 ~ comment:', comment);
-          return (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              onReply={handleAddComment}
-              level={0}
-            />
-          );
-        })}
+      {nestedComments.map(comment => (
+        <Comment
+          key={comment.id}
+          comment={comment}
+          onReply={handleAddComment}
+          level={0}
+        />
+      ))}
     </div>
   );
 };

@@ -1,29 +1,48 @@
+import React, { useState } from 'react';
+import CommentForm from './CommentForm'; // Ensure you have this import
+
 interface CommentProps {
   comment: Comment;
-  onReply: (parentId: number) => void; // Function to handle reply action
-  level: number; // Current nesting level to control indentation
+  onReply: (text: string, parentId: number) => Promise<void>; // Adjusted to match the async nature
+  level: number;
 }
 
 const Comment: React.FC<CommentProps> = ({ comment, onReply, level }) => {
-  console.log('🚀 ~ level:', level);
-  const { id, parent_id, display_name, text, created_at, replies } = comment;
-  const indentStyle = { marginLeft: `${level * 50}px` }; // Adjust indentation based on level
+  const [isReplying, setIsReplying] = useState(false);
+  const { id, display_name, text, replies } = comment;
+  const indentStyle = { marginLeft: `${level * 50}px` }; // Adjust indentation for visual hierarchy
+
+  const handleReplyClick = () => {
+    setIsReplying(true);
+  };
+
+  const handleAddComment = async (text: string) => {
+    await onReply(text, id);
+    setIsReplying(false);
+  };
 
   return (
     <div style={indentStyle}>
       <p>
         {display_name}: {text}
       </p>
-      <button onClick={() => onReply(id)}>Reply</button>
-      {replies &&
-        replies.map(reply => (
-          <Comment
-            key={reply.id}
-            comment={reply}
-            onReply={onReply}
-            level={level + 1}
-          />
-        ))}
+      {/* Only show the Reply button if the comment is not already two levels deep */}
+      {level < 1 && <button onClick={handleReplyClick}>Reply</button>}
+      {isReplying && (
+        <CommentForm
+          postId={comment.postId} // This needs adjustment to ensure you pass the correct postId
+          parentId={id}
+          onCommentAdded={handleAddComment}
+        />
+      )}
+      {replies?.map(reply => (
+        <Comment
+          key={reply.id}
+          comment={reply}
+          onReply={onReply}
+          level={level + 1} // Increase level for nested comments
+        />
+      ))}
     </div>
   );
 };
