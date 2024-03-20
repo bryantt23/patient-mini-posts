@@ -59,6 +59,13 @@ const Post: React.FC<PostProps> = ({ post }) => {
     initialNestedComments
   );
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [commentsVisible, setCommentsVisible] = useState(false);
+
+  const commentsCount = nestedComments.reduce(
+    (acc, comment) => acc + (comment.replies ? comment.replies.length : 0) + 1,
+    0
+  );
+  const toggleCommentsVisibility = () => setCommentsVisible(!commentsVisible);
 
   const handleHug = async () => {
     if (!alreadyHugged) {
@@ -126,14 +133,26 @@ const Post: React.FC<PostProps> = ({ post }) => {
         {hugCount} Hugs
       </button>
       <CommentForm postId={id} onCommentAdded={handleAddComment} />
-      {nestedComments.map(comment => (
-        <Comment
-          key={comment.id}
-          comment={comment}
-          onReply={handleAddComment}
-          level={0}
-        />
-      ))}
+      {commentsCount > 0 ? (
+        <>
+          <button onClick={toggleCommentsVisibility}>
+            {commentsVisible
+              ? `Hide All ${commentsCount} Comments`
+              : `Show All ${commentsCount} Comments`}
+          </button>
+          {commentsVisible &&
+            nestedComments.map(comment => (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                onReply={handleAddComment}
+                level={0}
+              />
+            ))}
+        </>
+      ) : (
+        <p>No comments yet.</p>
+      )}
     </div>
   );
 };
