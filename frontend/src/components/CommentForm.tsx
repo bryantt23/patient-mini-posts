@@ -1,8 +1,8 @@
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import React, { useState } from 'react';
 import { CommentFormProps } from '../types';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 
 const CommentForm: React.FC<CommentFormProps> = ({
   parentId = null,

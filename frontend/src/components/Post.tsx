@@ -1,3 +1,11 @@
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { CardActions } from '@mui/material';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Collapse from '@mui/material/Collapse';
+import Typography from '@mui/material/Typography';
 import { formatDistanceToNow } from 'date-fns';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -6,15 +14,6 @@ import { IComment, PostProps } from '../types';
 import { addCommentToComment, nestComments } from '../utils/commentUtils';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Collapse from '@mui/material/Collapse';
-import Button from '@mui/material/Button';
-import { CardActions } from '@mui/material';
 
 const Post: React.FC<PostProps> = ({ post }) => {
   const { id, title, created_at, num_hugs, comments } = post;
