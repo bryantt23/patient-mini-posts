@@ -1,11 +1,15 @@
+import { formatDistanceToNow } from 'date-fns';
 import React, { useState } from 'react';
-import CommentForm from './CommentForm'; // Ensure you have this import
 import { CommentProps } from '../types';
+import CommentForm from './CommentForm'; // Ensure you have this import
 
 const Comment: React.FC<CommentProps> = ({ comment, onReply, level }) => {
   const [isReplying, setIsReplying] = useState(false);
-  const { id, display_name, text, replies } = comment;
+  const { id, display_name, text, replies, created_at } = comment;
   const indentStyle = { marginLeft: `${level * 50}px` }; // Adjust indentation for visual hierarchy
+  const formattedDate = formatDistanceToNow(new Date(created_at), {
+    addSuffix: true
+  });
 
   const handleReplyClick = () => {
     setIsReplying(true);
@@ -20,7 +24,8 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply, level }) => {
     <div style={indentStyle}>
       <p>
         {display_name}: {text}
-      </p>
+      </p>{' '}
+      <p>Created at: {formattedDate}</p>
       {/* Only show the Reply button if the comment is not already two levels deep */}
       {level < 1 && <button onClick={handleReplyClick}>Reply</button>}
       {isReplying && (

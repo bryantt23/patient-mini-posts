@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 import _ from 'lodash';
+import React, { useState } from 'react';
 import { addCommentToPost, givePostHug } from '../services/patientInfo';
-import Comment from './Comment';
-import CommentForm from './CommentForm';
 import { IComment, PostProps } from '../types';
 import { addCommentToComment, nestComments } from '../utils/commentUtils';
+import Comment from './Comment';
+import CommentForm from './CommentForm';
 
 const Post: React.FC<PostProps> = ({ post }) => {
   const { id, title, created_at, num_hugs, comments } = post;
@@ -32,6 +33,9 @@ const Post: React.FC<PostProps> = ({ post }) => {
     }
   };
 
+  const formattedDate = formatDistanceToNow(new Date(created_at), {
+    addSuffix: true
+  });
   const handleAddComment = async (text: string, parentId?: number | null) => {
     const newCommentData = {
       display_name: 'Logged in user',
@@ -76,7 +80,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
           </span>
         )}
       </p>
-      <p>Created at: {created_at}</p>
+      <p>Created at: {formattedDate}</p>
       <button onClick={handleHug} disabled={alreadyHugged}>
         {hugCount} Hugs
       </button>
