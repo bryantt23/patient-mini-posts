@@ -3,6 +3,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { fetchPosts } from '../services/patientInfo';
 import { IPost } from '../types';
 import Post from './Post';
+import Typography from '@mui/material/Typography';
 
 const PAGE_SIZE = 3;
 const Posts = () => {
@@ -26,7 +27,9 @@ const Posts = () => {
 
   return (
     <div>
-      <h1>Healthbook</h1>
+      <Typography variant='h2' align='center' gutterBottom>
+        Healthbook
+      </Typography>
       <InfiniteScroll
         dataLength={posts.length} //This is important field to render the next data
         next={fetchData}

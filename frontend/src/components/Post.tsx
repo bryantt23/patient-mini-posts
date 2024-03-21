@@ -6,6 +6,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
+import { Box } from '@mui/system';
 import { formatDistanceToNow } from 'date-fns';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -74,85 +75,87 @@ const Post: React.FC<PostProps> = ({ post }) => {
   };
 
   return (
-    <Card variant='outlined' sx={{ mb: 2 }}>
-      <CardContent>
-        <Typography gutterBottom variant='h5' component='div'>
-          {title}
-        </Typography>
-        <Typography variant='body2' color='text.secondary'>
-          {renderDescription()}
-          {isCollapsed && post.patient_description.length > 150 && (
-            <Button size='small' onClick={() => setIsCollapsed(false)}>
-              See More
-            </Button>
-          )}
-        </Typography>
-        <Typography sx={{ mt: 2, mb: 1 }} color='text.secondary'>
-          Created at: {formattedDate}
-        </Typography>
-        <CommentForm postId={id} onCommentAdded={handleAddComment} />
-      </CardContent>
-      <CardActions
-        disableSpacing
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          flexWrap: 'wrap'
-        }}
-      >
-        <Button
-          startIcon={<FavoriteIcon />}
-          onClick={handleHug}
-          color={alreadyHugged ? 'error' : 'secondary'}
-          sx={{
-            mr: 1,
-            border: '1px solid',
-            borderColor: alreadyHugged ? 'error.main' : 'secondary.main',
-            '&:hover': {
-              border: '1px solid',
-              borderColor: alreadyHugged ? 'error.dark' : 'secondary.dark'
-            }
-          }}
-        >
-          {hugCount}
-        </Button>
-
-        <Button
-          startIcon={<ExpandMoreIcon />}
-          onClick={() => setCommentsVisible(!commentsVisible)}
-          aria-expanded={commentsVisible}
-          aria-label='show comments'
-          sx={{
-            border: '1px solid',
-            borderColor: 'primary.main',
-            '&:hover': {
-              border: '1px solid',
-              borderColor: 'primary.dark'
-            }
-          }}
-        >
-          {commentsCount > 0
-            ? commentsVisible
-              ? `Hide ${commentsCount} comments`
-              : `Show ${commentsCount} comments`
-            : 'No comments yet'}
-        </Button>
-      </CardActions>
-
-      <Collapse in={commentsVisible} timeout='auto' unmountOnExit>
+    <Box margin={2}>
+      <Card variant='outlined' sx={{ mb: 2 }}>
         <CardContent>
-          {nestedComments.map(comment => (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              onReply={handleAddComment}
-              level={0}
-            />
-          ))}
+          <Typography gutterBottom variant='h5' component='div'>
+            {title}
+          </Typography>
+          <Typography variant='body1'>
+            {renderDescription()}
+            {isCollapsed && post.patient_description.length > 150 && (
+              <Button size='small' onClick={() => setIsCollapsed(false)}>
+                See More
+              </Button>
+            )}
+          </Typography>
+          <Typography sx={{ mt: 2, mb: 1 }}>
+            Created: {formattedDate}
+          </Typography>
+          <CommentForm postId={id} onCommentAdded={handleAddComment} />
         </CardContent>
-      </Collapse>
-    </Card>
+        <CardActions
+          disableSpacing
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            flexWrap: 'wrap'
+          }}
+        >
+          <Button
+            startIcon={<FavoriteIcon />}
+            onClick={handleHug}
+            color={alreadyHugged ? 'error' : 'secondary'}
+            sx={{
+              mr: 1,
+              border: '1px solid',
+              borderColor: alreadyHugged ? 'error.main' : 'secondary.main',
+              '&:hover': {
+                border: '1px solid',
+                borderColor: alreadyHugged ? 'error.dark' : 'secondary.dark'
+              }
+            }}
+          >
+            {hugCount}
+          </Button>
+
+          <Button
+            startIcon={<ExpandMoreIcon />}
+            onClick={() => setCommentsVisible(!commentsVisible)}
+            aria-expanded={commentsVisible}
+            aria-label='show comments'
+            sx={{
+              border: '1px solid',
+              borderColor: 'primary.main',
+              '&:hover': {
+                border: '1px solid',
+                borderColor: 'primary.dark'
+              }
+            }}
+          >
+            {commentsCount > 0
+              ? commentsVisible
+                ? `Hide ${commentsCount} comments`
+                : `Show ${commentsCount} comments`
+              : 'No comments yet'}
+          </Button>
+        </CardActions>
+
+        <Collapse in={commentsVisible} timeout='auto' unmountOnExit>
+          <CardContent>
+            {nestedComments.map(comment => (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                onReply={handleAddComment}
+                level={0}
+              />
+            ))}
+          </CardContent>
+        </Collapse>
+      </Card>
+    </Box>
   );
 };
 

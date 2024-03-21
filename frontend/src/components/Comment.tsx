@@ -26,7 +26,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onReply, level }) => {
         <strong>{display_name}</strong>: {text}
       </Typography>
       <Typography variant='caption' component='p' sx={{ mb: 1 }}>
-        Created at: {formattedDate}
+        Created: {formattedDate}
       </Typography>
       {/* Only show the Reply button if the comment is not already two levels deep */}
       {level < 1 && (
